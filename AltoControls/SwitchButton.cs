@@ -48,7 +48,7 @@ namespace AltoControls
             get { return borderColor; }
             set
             {
-                borderColor = value;
+                borderColor = Color.GreenYellow;
                 Invalidate();
             }
         }
@@ -67,8 +67,8 @@ namespace AltoControls
             rect = new RoundedRectangleF(2 * diameter, diameter + 2, diameter / 2, 1, 1);
             circle = new RectangleF(1, 1, diameter, diameter);
             isOn = true;
-            borderColor = Color.LightGray;
-
+            borderColor = Color.GreenYellow;
+            ForeColor = Color.LightGreen;
             paintTicker.Tick += paintTicker_Tick;
             paintTicker.Interval = 1;
         }
@@ -92,7 +92,7 @@ namespace AltoControls
         {
             float x = circle.X;
 
-            if (isOn)           //switch the circle to the left
+            if (isOn) //switch the circle to the left
             {
                 if (x + artis <= Width - diameter - 1)
                 {
@@ -145,10 +145,10 @@ namespace AltoControls
 
             if (Enabled)
             {
-                using (SolidBrush brush = new SolidBrush(isOn ? Color.LightGreen : Color.LightGray))
+                using (SolidBrush brush = new SolidBrush(isOn ? ForeColor : Color.FromArgb(237, 237, 237)))
                     e.Graphics.FillPath(brush, rect.Path);
 
-                using (Pen pen = new Pen(borderColor, 2f))
+                using (Pen pen = new Pen(isOn ? Color.Transparent : Color.FromArgb(219, 219, 219), 1.2f))
                     e.Graphics.DrawPath(pen, rect.Path);
 
                 string on = "ON";
@@ -165,12 +165,11 @@ namespace AltoControls
                         e.Graphics.DrawString(off, font, Brushes.Gray, diameter + 2, y + 1);
                     }
 
-                using (SolidBrush circleBrush = new SolidBrush("#f6f0e6".FromHex()))
+                using (SolidBrush circleBrush = new SolidBrush("#FFFFFF".FromHex()))
                     e.Graphics.FillEllipse(circleBrush, circle);
 
                 using (Pen pen = new Pen(Color.LightGray, 1.2f))
                     e.Graphics.DrawEllipse(pen, circle);
-
             }
             else
             {
@@ -179,7 +178,7 @@ namespace AltoControls
                 {
                     e.Graphics.FillPath(disableBrush, rect.Path);
                     e.Graphics.FillEllipse(ellBrush, circle);
-                    e.Graphics.DrawEllipse(Pens.DarkGray, circle);
+                    e.Graphics.DrawEllipse(Pens.ForestGreen, circle);
                 }
             }
 

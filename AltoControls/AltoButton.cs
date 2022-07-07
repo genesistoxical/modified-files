@@ -10,6 +10,7 @@ namespace AltoControls
     public class AltoButton : Control, IButtonControl
     {
         #region Variables
+        public Label Txt = new Label();
         int radius;
         bool transparency;
         MouseState state;
@@ -49,10 +50,8 @@ namespace AltoControls
             inactive2 = Color.FromArgb(33, 167, 188);
             active1 = Color.FromArgb(64, 168, 183);
             active2 = Color.FromArgb(36, 164, 183);
-
             radius = 10;
             roundedRect = new RoundedRectangleF(Width, Height, radius);
-
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer |
                      ControlStyles.ResizeRedraw | ControlStyles.SupportsTransparentBackColor |
                      ControlStyles.UserPaint, true);
@@ -61,9 +60,56 @@ namespace AltoControls
             Font = new System.Drawing.Font("Comic Sans MS", 10, FontStyle.Bold);
             state = MouseState.Leave;
             transparency = false;
+
+            Txt.Parent = this;
+            Controls.Add(Txt);
+            Txt.BorderStyle = BorderStyle.None;
+            Txt.Font = Font;
+            Txt.Click += Txt_Click;
+            Txt.MouseDoubleClick += Txt_MouseDoubleClick;
+            Txt.MouseDown += Txt_MouseDown;
+            Txt.MouseUp += Txt_MouseUp;
+            Txt.MouseEnter += Txt_MouseEnter;
+            Txt.MouseLeave += Txt_MouseLeave;
         }
         #endregion
         #region Events
+        void Txt_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            base.OnMouseDoubleClick(e);
+            base.OnClick(e);
+        }
+        void Txt_Click(object sender, EventArgs e)
+        {
+            base.OnClick(e);
+        }
+        void Txt_MouseDown(object sender, MouseEventArgs e)
+        {
+            Capture = false;
+            state = MouseState.Down;
+            base.OnMouseDown(e);
+            Invalidate();
+        }
+        void Txt_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (state != MouseState.Leave)
+                state = MouseState.Enter;
+            base.OnMouseUp(e);
+            Invalidate();
+        }
+        void Txt_MouseEnter(object sender, EventArgs e)
+        {
+            state = MouseState.Enter;
+            base.OnMouseEnter(e);
+            Invalidate();
+        }
+        void Txt_MouseLeave(object sender, EventArgs e)
+        {
+            state = MouseState.Leave;
+            base.OnMouseLeave(e);
+            Invalidate();
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             #region Transparency
@@ -116,16 +162,24 @@ namespace AltoControls
 
             #endregion
 
-            #region Text Drawing
-            using (StringFormat sf = new StringFormat()
-            {
-                LineAlignment = StringAlignment.Center,
-                Alignment = StringAlignment.Center
-            })
-            using (Brush brush = new SolidBrush(ForeColor))
-                e.Graphics.DrawString(Text, Font, brush, this.ClientRectangle, sf);
+            #region Text
+            Txt.Location = new Point(radius - 0, Height / 2 - Txt.Font.Height / 2);
+            Txt.TextAlign = ContentAlignment.TopCenter;
+            Txt.Width = Width - (int)(radius * 1.5);
             #endregion
+
             base.OnPaint(e);
+        }
+        protected override void OnFontChanged(EventArgs e)
+        {
+            base.OnFontChanged(e);
+            Txt.Font = Font;
+            Invalidate();
+        }
+        protected override void OnTextChanged(EventArgs e)
+        {
+            base.OnTextChanged(e);
+            Txt.Text = Text;
         }
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
@@ -172,10 +226,8 @@ namespace AltoControls
             base.OnMouseUp(e);
             Invalidate();
         }
-        #endregion
+        #endregion       
         #region Properties
-
-
         public int Radius
         {
             get
@@ -300,5 +352,4 @@ namespace AltoControls
         Down,
         Up,
     }
-
 }
